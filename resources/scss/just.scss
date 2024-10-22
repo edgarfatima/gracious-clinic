@@ -1,0 +1,45 @@
+@use 'variables' as v;
+@import 'general';
+
+main {
+    width: 100%;
+}
+.section {
+
+    .container {
+        max-width: 1920px;
+        margin: auto;
+        min-height: 100%;
+    }
+}
+
+section {
+    &:nth-child(1) .section .container {
+            background-image: url(/public/images/index/waves.png);
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .content {
+                display: flex;
+                align-items: center;
+
+                .appstore {
+                    display: flex;
+                    justify-content: center; /* Centers items horizontally */
+                    gap: 20px; /* Adjust the gap between images */
+                }
+            
+                .appstore a {
+                    flex: 1; /* Makes each link fill available space */
+                    max-width: 150px; /* Sets a maximum width for each link */
+                    text-align: center; /* Centers the icons horizontally */
+                }
+            
+                .appstore a img {
+                    width: 100%; /* Ensures the image fills its container */
+                    height: auto; /* Maintains aspect ratio */
+                }
+            }
+    }
+}
