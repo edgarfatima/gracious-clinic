@@ -15,21 +15,22 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
-            $table->boolean('email_verified')->default(false);
+            $table->string('username')->unique();
+            $table->boolean('number_verified')->default(false);
+            $table->string('age');
             $table->string('number')->unique();
             $table->string('street_address');
-            $table->integer('city_id');
-            $table->integer('province_id');
-            $table->string('country')->default('Philippines');
-            $table->string('status')->default('active');
+            $table->string('city');
+            $table->string('province');
+            $table->string('country');
+            $table->enum('status', ['Activated', 'Deactivated'])->default('Activated');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('number')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

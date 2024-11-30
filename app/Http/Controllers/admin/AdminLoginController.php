@@ -15,7 +15,7 @@ class AdminLoginController extends Controller
      *
      * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function index()
+    public function view()
     {
         return view('admin.login');
     }
@@ -29,32 +29,42 @@ class AdminLoginController extends Controller
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required',
+        ], [
+            'username.required' => 'Username is required.',
+            'password.required' => 'Password is required.'
         ]);
 
-        if ($validator->passes()) {
-            if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
+        $user = \App\Models\Employee::where('username', $request->username)->first();
 
-                $request->session()->regenerate();
-
-                $user = Auth::guard('admin')->user();
-
-                // Redirect based on user role
-                if ($user->role === 'admin') {
-                    return redirect()->route('admin.dashboard');
-                } elseif ($user->role === 'doctor') {
-                    return redirect()->route('doctor.user');
-                } elseif ($user->role === 'staff') {
-                    return redirect()->route('staff.pending.appointment');
-                } else {
-                    return redirect()->route('admin.login')->with('error', 'Unauthorized role');
-                }
-            }
+        if ($validator->fails()) {
+            return redirect()->route('admin.login')->withErrors($validator)->withInput();
         }
 
-        // Authentication failed, redirect back to login with error
-        return redirect()->route('admin.login')->with('error', 'Invalid Credentials')->withInput();
+        if (!$user) {
+            return redirect()->route('admin.login')
+                ->withErrors(['username' => 'Invalid username. Please try again.'])
+                ->withInput();
+        }
+
+        if (!Auth::guard('admin')->attempt(['username' => $request->username, 'password' => $request->password])) {
+            return redirect()->route('admin.login')
+                ->withErrors(['password' => 'Invalid password. Please try again.'])
+                ->withInput();
+        }
+
+        $request->session()->regenerate();
+
+        $user = Auth::guard('admin')->user();
+
+        if ($user->role === 'Admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'Doctor') {
+            return redirect()->route('doctor.user');
+        } elseif ($user->role === 'Staff') {
+            return redirect()->route('staff.pending.appointment');
+        }
     }
 
     /**
@@ -62,6 +72,7 @@ class AdminLoginController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
+
     public function logout()
     {
         Auth::guard('admin')->logout();

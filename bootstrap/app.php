@@ -26,8 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'user.auth' => UserAuthMiddleware::class,
             'preventBackHistory' => PreventBackHistory::class,
             'csrf.disabled' => \App\Http\Middleware\DisableCsrfProtection::class,
-            // Sanctum Middleware for API routes
-            'sanctum' => EnsureFrontendRequestsAreStateful::class,  // Add this alias for Sanctum
         ]);
 
         $middleware->redirectTo();

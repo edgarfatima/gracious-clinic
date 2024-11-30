@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Appointments</title>
+    <title>Patient Records</title>
 
     @vite([ 
-    'resources/scss/admin/adminpendingappointment.scss', 
+    'resources/scss/admin/admintable.scss', 
     'resources/scss/sidebar.scss', 
     'resources/scss/footer.scss', 
-    'resources/js/sidebar.js', 
     'resources/scss/modal.scss',
-    'resources/js/admin/appointmentlist.js'
+    'resources/js/sidebar.js',
+    'resources/js/admin/patientrecord.js',
     ])
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js" defer></script>
 </head>
 <body>
     <main>
@@ -24,7 +27,7 @@
                     <div class="section">
                         <div class="section-header">
                             <div class="appointment-header">
-                                <h2>Admin | Appointment List</h2>
+                                <h2>Admin | <span>Patient Records</span></h2>
                             </div>
                             <div class="profile">
         
@@ -37,20 +40,22 @@
                             <div class="search">
                                 <input type="text" placeholder="Search">
                             </div>
-                           
+                            <div class="button">
+                                <button id="add-btn">Add Patient Record</button>
+                            </div>
                         </div>
                         <div class="scrollable-table">
-                            <table class="appointment-table table-sortable">
+                            <table class="table table-sortable">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Patient Name</th>
-                                        <th>Appointment Date</th>
-                                        <th>Status</th>
                                         <th>Date Created</th>
+                                        <th>Medical Record</th>
+                                        <th>Treatment Record</th>
                                     </tr>
                                 </thead>
-                                <tbody id="appointmentTableBody">
+                                <tbody id="patientRecordTableBody">
                                     
                                 </tbody>
                         
@@ -62,8 +67,51 @@
             </div>
         </div>
     </main>
+
+    <div id="addModal">
+        <div class="modal">
+            <div class="form-header">
+                <div id="add-close-modal">
+                    X
+                </div>
+            </div>
+            <div class="form-content">
+                <h2>Add Patient Record</h2>
+                <form id="addForm" method="POST">
+                    @csrf
+                    <div id="add-container" class="form-control">
+                        <ul id="validation-errors" class="text-danger">
+
+                        </ul>
+                    </div>
+                    <div class="form-control">
+                        <select name="patient_id" id="patient" class="form-select">
+                            <option value="">Select Patient</option>
+                            @foreach ($patients as $patient)
+                                <option value="{{ $patient->id }}">{{ $patient->first_name }} {{ $patient->last_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <button type="submit" class="submit-btn">Confirm</button>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <script>
+    $(document).ready(function () {
+    // Initialize Select2 for searchable dropdown
+    $('#patient').select2({
+        placeholder: "Select Patient",
+        allowClear: true
+    });
+});
+    // Initialize Select2 for searchable dropdown
  /**
  * Sorts a HTML table.
  *

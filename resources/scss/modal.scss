@@ -1,7 +1,7 @@
 @use 'variables' as v;
 @import 'general.scss';
 
-#add-container, #validation-error {
+#validation-errors, #update-errors {
     display: none;
 }
 .text-danger {
@@ -21,7 +21,7 @@
 }
 
 
-#updateModal, #addModal, #acceptModal, #rejectModal {
+#updateModal, #addModal, #acceptModal, #rejectModal, #deactivateModal, #activateModal, #cancelModal {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -44,9 +44,10 @@
         display: flex;
         justify-content: flex-end;
     
-        #add-close-modal, #update-close-modal, #accept-close-modal, #reject-close-modal {
+        #add-close-modal, #update-close-modal, #accept-close-modal, #reject-close-modal, 
+        #deactivate-close-modal, #activate-close-modal, #cancel-close-modal {
             cursor: pointer;
-            padding: 0 20px;
+            padding: 20px 20px 0 20px;
             font-size: 20px;
         }
     }
@@ -62,12 +63,15 @@
             align-items: center;
             padding: 20px;
                 .form-control {
+                    display: flex;
+                    justify-content: center;
                     width: 100%;
                     margin: 10px 0;
-
-                    p {
-                        font-size: 1.2rem;
+                    
+                    p, span {
+                        font-size: 1rem;
                     }
+
                     input {
                         padding: 10px;
                         width: 100%;
@@ -78,11 +82,66 @@
                         }
                     }
 
+                    .age {
+                        width: 20%;
+                        margin-right: 5px;
+                    }
+                    .phone-number {
+                        display: flex;
+                        align-items: center;
+                        flex: 1;
+                        border: 1px solid v.$line;
+                        span {
+                            font-size: 0.8rem;
+                            border-right: 1px solid v.$line;
+                            padding: 10px;
+                        }
+                        input {
+                            border: none;
+                        }
+                    }
+
                     select {
                         padding: 10px;
                         width: 100%;
+                        flex: 1;
                     }
 
+                    textarea {
+                        width: 100%;
+                        padding: 10px;
+                        resize: none;
+                        outline: none;
+                    }
+
+                    input:focus, select:focus, textarea:focus {
+                        outline: none;
+                    }
+                    .custom-file-input::-webkit-file-upload-button {
+                        visibility: hidden;
+                      }
+                      .custom-file-input::before {
+                        content: 'Select some files';
+                        display: inline-block;
+                        background: linear-gradient(top, #f9f9f9, #e3e3e3);
+                        border: 1px solid #999;
+                        border-radius: 3px;
+                        padding: 5px 8px;
+                        outline: none;
+                        white-space: nowrap;
+                        -webkit-user-select: none;
+                        cursor: pointer;
+                        text-shadow: 1px 1px #fff;
+                        font-weight: 700;
+                        font-size: 10pt;
+                      }
+                      .custom-file-input:hover::before {
+                        border-color: black;
+                      }
+                      .custom-file-input:active::before {
+                        background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+                      }
+                      
                     &:last-of-type {
                         display: flex;
                         justify-content: center;
@@ -96,7 +155,20 @@
                         }
                     }
                 }
+                .form-control-col {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    input {
+                        padding: 10px;
+                        width: 100%;
+                        border: 1px solid v.$line;
 
+                        &:focus {
+                            outline: none;
+                        }
+                    }
+                }
         }
     }
 

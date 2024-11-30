@@ -26,19 +26,18 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $randomCityId = City::inRandomOrder()->first()->id;
-        $randomProvinceId = Province::inRandomOrder()->first()->id;
-
         return [
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->email(),
-            'email_verified' => fake()->randomElement([false, true]),
-            'number' => fake()->unique()->phoneNumber(),
-            'street_address' => fake()->address(),
-            'city_id' => $randomCityId, // Assign random City ID
-            'province_id' => $randomProvinceId, // Assign random Province ID
-            'status' => fake()->randomElement(['active', 'inactive']),
+            'username' => fake()->unique()->userName(),
+            'number_verified' => fake()->randomElement([false, true]),
+            'age' => fake()->numberBetween(18, 80), // Assuming age is a range
+            'number' => '09' . fake()->numerify('#########'), // Philippine format example
+            'street_address' => fake()->streetAddress(),
+            'city' => fake()->city(),
+            'province' => fake()->state(), // If it's for the Philippines, you may customize this
+            'country' => 'Philippines', // Assuming fixed for your use case
+            'status' => fake()->randomElement(['Activated', 'Deactivated']),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];

@@ -7,7 +7,7 @@
     <title>Appointments</title>
 
     @vite([ 
-    'resources/scss/admin/adminpendingappointment.scss', 
+    'resources/scss/admin/admintable.scss', 
     'resources/scss/sidebar.scss', 
     'resources/scss/footer.scss', 
     'resources/js/sidebar.js', 
@@ -24,7 +24,7 @@
                     <div class="section">
                         <div class="section-header">
                             <div class="appointment-header">
-                                <h2>Admin | Pending Appointments</h2>
+                                <h2>Admin | <span>Appointments</span></h2>
                             </div>
                             <div class="profile">
         
@@ -32,34 +32,82 @@
                         </div>
                     </div>
                     <div class="section">
+                        <div class="section-content-header">
+                            <h2>Pending Appointments</h2>
+                        </div>
                         <div class="table-wrapper">
                            <div class="table-navigation">
                             <div class="search">
                                 <input type="text" placeholder="Search">
+                                <span>Filter Services: 
+                                    <select name="filterService" id="filterService">
+                                        <option value="">None</option>
+                                    </select>
+                                </span>
+                                <span>Filter Date:<input type="date" id="filterDate" name="filterDate"></span>
+                            </div>
+                            <div class="date">
+                               
                             </div>
                             <div class="button">
                                 <button id="add-btn">Add Appointment</button>
                             </div>
                         </div>
                         <div class="scrollable-table">
-                            <table class="appointment-table table-sortable">
+                            <table class="table table-sortable">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Patient Name</th>
                                         <th>Appointment Date</th>
+                                        <th>Preference</th>
                                         <th>Status</th>
-                                        <th>Date Created</th>
+                                        <th>Service</th>
+                                        <th>Remarks</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="appointmentTableBody">
+                                <tbody id="pendingAppointmentsTableBody">
                                     
                                 </tbody>
                         
                             </table>
                         </div> 
                         </div>
+                        <div id="pendingAppointmentsPagination" class="pagination-controls"></div>
+                    </div>
+                    <div class="section">
+                        <div class="section-content-header">
+                            <h2>Appointment List</h2>
+                        </div>
+                        <div class="table-wrapper">
+                           <div class="table-navigation">
+                            <div class="search">
+                                <input type="text" placeholder="Search">
+                            </div>
+                           
+                        </div>
+                        <div class="scrollable-table">
+                            <table class="table table-sortable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Patient Name</th>
+                                        <th>Appointment Date</th>
+                                        <th>Appointment Time</th>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Date Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointmentListTableBody">
+                                    
+                                </tbody>
+                        
+                            </table>
+                        </div> 
+                        </div>
+                        <div id="appointmentListPagination" class="pagination-controls"></div>
                     </div>
                 </div>
             </div>
@@ -79,9 +127,23 @@
                     @csrf
                     <input type="hidden" name="id" id="accept-appointment-id" value="" required>
                     <div class="form-control">
-                        <p>Would you like to accept this appointment?</p>
-                    </div>    
+                        <span id="time-validation-message" class="validation-message"></span>
+                    </div> 
+                    
                     <div class="form-control">
+                            <p>Would you like to accept this appointment?</p>
+                        </div>
+                        <div class="form-control">
+                            <p>Preference: <span id="preference"></span></p>
+                        </div>
+                        <div class="form-control">
+                            <p>Time Input: <span id="timeRange"></span></p>
+                        </div>
+                        <div class="form-control">
+                            <input type="time" name="time" id="time" required>
+                        </div>
+                        
+                        <div class="form-control">
                             <button type="submit" class="submit-btn">Confirm</button>
                         </div>
                     </form>
@@ -99,10 +161,10 @@
                 <form id="rejectForm" method="POST">
                     @csrf
                     <input type="hidden" name="id" id="reject-appointment-id" value="" required>
-                    <div class="form-control">
-                        <p>Would you like to reject this appointment?</p>
-                    </div>    
-                    <div class="form-control">
+                        <div class="form-control">
+                            <p>Would you like to reject this appointment?</p>
+                        </div>    
+                        <div class="form-control">
                             <button type="submit" class="submit-btn">Confirm</button>
                         </div>
                     </form>

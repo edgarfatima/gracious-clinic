@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
+    public function view()
     {
 
         return view('admin.dashboard');
@@ -20,12 +20,12 @@ class AdminDashboardController extends Controller
     public function getDemographicData()
     {
         $appointmentsToday = Appointment::whereDate('appointment_date', today())->count();
-        $totalPatients = User::count();
+        $totalUsers = User::count();
         $totalDoctors = Employee::where('role', 'doctor')->count();
 
         return response()->json([
             'appointmentsToday' => $appointmentsToday,
-            'totalPatients' => $totalPatients,
+            'totalUsers' => $totalUsers,
             'totalDoctors' => $totalDoctors,
         ]);
     }
@@ -50,14 +50,18 @@ class AdminDashboardController extends Controller
         $endOfMonth = Carbon::now()->endOfMonth();
 
         $doughnutData = Appointment::whereBetween('appointment_date', [$startOfMonth, $endOfMonth])
-            ->selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status')
+            ->selectRaw('
+            CASE
+                WHEN status IN ("missed", "cancelled", "rejected") THEN "Missed/Cancelled/Rejected"
+                WHEN status = "completed" THEN "Completed"
+                WHEN status IN ("accepted", "ongoing") THEN "Accepted/Ongoing"
+                ELSE "Pending"
+            END as status_group,
+            COUNT(*) as count
+        ')
+            ->groupBy('status_group')
+            ->pluck('count', 'status_group')
             ->toArray();
-
-        Log::info('Labels:', $labels->toArray());
-        Log::info('Appointment Counts:', $counts);
-        Log::info('Doughnut Data:', $doughnutData);
 
         // Return JSON data for charts
         return response()->json([

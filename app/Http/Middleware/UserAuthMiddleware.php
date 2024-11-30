@@ -17,7 +17,7 @@ class UserAuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::guard('web')->check()) {
-            return redirect()->route('account.login');
+            return redirect()->route('user.login');
         }
 
         return $next($request);

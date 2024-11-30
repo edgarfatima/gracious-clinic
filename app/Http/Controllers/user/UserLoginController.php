@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class UserLoginController extends Controller
 {
@@ -20,27 +20,33 @@ class UserLoginController extends Controller
     {
         // Validate the form inputs
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required',
         ]);
 
-        if ($validator->passes()) {
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-            // If the email exists, try to authenticate the user
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                // Successful authentication, redirect to user dashboard
-                return redirect()->route('user.dashboard');
-            } else {
-                // Password is incorrect
-                return redirect()->route('user.login')
-                    ->withErrors(['error' => 'Incorrect email or password.'])
-                    ->withInput();
-            }
+        $user = User::where('username', $request->username)->first();
+
+        if (!$user) {
+            return response()->json(['errors' => ['username' => ['User not found.']]], 422);
+        }
+
+        if ($user->number_verified != 1) {
+            return response()->json(['errors' => ['username' => ['Account not verified. Please verify your account.']]], 422);
+        }
+
+        if ($user->status !== 'Activated') {
+            return response()->json(['errors' => ['username' => ['Account inactive.']]], 422);
+        }
+
+        if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+            Session::put('user_id', $user->id);
+            return response()->json(['status' => 'success']);
         } else {
-            // Validation failed, redirect back with validation errors
-            return redirect()->route('user.login')
-                ->withErrors($validator)
-                ->withInput();
+            return response()->json(['errors' => ['password' => ['Incorrect password.']]], 422);
         }
     }
 
@@ -48,51 +54,5 @@ class UserLoginController extends Controller
     {
         Auth::logout();
         return redirect()->route('user.login');
-    }
-
-    public function authenticateMobile(Request $request)
-    {
-        // Validate request
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        // Log the attempted login details
-        $validatedData = $validator->validated();
-        Log::info('Login attempt for email: ' . $validatedData['email']);
-
-        // Attempt to authenticate the user
-        if (Auth::attempt($validatedData)) {
-            // Get the authenticated user instance
-            $user = Auth::user();
-
-            // Log successful login
-            Log::info('User logged in successfully: ' . $user->email);
-
-            // Generate a token for the user using Sanctum
-            $token = rand(100000, 999999);
-
-            // Return a success response with the token
-            return response()->json([
-                'token' => $token,
-            ], 200);
-        } else {
-            // Log failed login attempt
-            Log::warning('Failed login attempt for email: ' . $validatedData['email']);
-
-            // If authentication fails
-            return response()->json([
-                'message' => 'Invalid email or password',
-            ], 401);
-        }
     }
 }

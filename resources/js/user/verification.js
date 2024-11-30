@@ -1,50 +1,53 @@
 import axios from 'axios';
 
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('otpForm');
-    const otpInput = document.getElementById('otp');
+    const numberInput = document.getElementById('number');
+    const otpNumberInput = document.getElementById('otpNumber');
     const generateBtn = document.getElementById('generateBtn');
-    const verifyBtn = document.getElementById('verifyBtn');
     let countdown;
 
-    generateBtn.addEventListener('click', function() {
-        generateOTP();
+    numberInput.addEventListener('input', function() {
+        otpNumberInput.value = numberInput.value;
     });
 
-    verifyBtn.addEventListener('click', function() {
-        verifyOTP();
-    });
-
-    function generateOTP() {
-        const formData = new FormData(form);
-
-        axios.post("/account/verification/generate", formData)
-            .then(function(response) {
+    $('#otpForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        axios.post('/account/verification/send-otp', formData)
+        .then(function(response) {
+            if (response.data.status === 'ok') {
+                startTimer(60, generateBtn);
                 alert('OTP sent successfully!');
-                otpInput.disabled = false; // Enable OTP input
-                startTimer(60, generateBtn); // Start 60-second timer
+            } else {
+                alert(response.data.message || 'Failed to generate OTP. Please try again.');
+            }
+        })
+        .catch(function(error) {
+            alert(error.response.data.message || 'Failed to generate OTP. Please try again.');
+        });
+    })
+
+    $('#verificationOTP').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.append('number', otpNumberInput.value);
+        axios.post('/account/verification/process', formData)
+            .then((response) => {
+                alert(response.data.message);
+                window.location.href = "/account/login";
             })
-            .catch(function(error) {
-                alert('Failed to generate OTP. Please try again.');
+            .catch((error) => {
+                let errorMessage;
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+                alert(errorMessage);
             });
-    }
-
-    function verifyOTP() {
-        const formData = new FormData(form);
-
-        axios.post("/account/verification/verify", formData)
-            .then(function(response) {
-                alert('OTP verified successfully!');
-                window.location.href = "{{ route('user.login') }}";
-            })
-            .catch(function(error) {
-                alert('Invalid OTP entered. Please try again.');
-            });
-    }
-
+    });
+    
     function startTimer(duration, button) {
         let timer = duration, seconds;
-        clearInterval(countdown); // Clear any existing countdown
+        clearInterval(countdown);
 
         countdown = setInterval(function () {
             seconds = parseInt(timer % 60, 10);

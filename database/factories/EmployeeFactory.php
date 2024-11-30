@@ -22,10 +22,10 @@ class EmployeeFactory extends Factory
         return [
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
-            'number' => Fake()->unique()->phoneNumber(),
-            'role' => $this->faker->randomElement(['admin', 'doctor', 'staff']),
-            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'username' => fake()->unique()->userName(),
+            'number' => '0' . substr(str_shuffle('123456789'), 0, 10),
+            'role' => $this->faker->randomElement(['Admin', 'Doctor', 'Staff']),
+            'status' => $this->faker->randomElement(['Activated', 'Deactivated']),
             'password' => static::$password ??= Hash::make('password')
         ];
     }

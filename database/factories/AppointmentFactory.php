@@ -19,10 +19,13 @@ class AppointmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'patient_id' => \App\Models\User::factory(),
-            'appointment_date' => $this->faker->dateTimeBetween('2024-10-01', '2024-10-31')->format('Y-m-d'),
-            'status' => $this->faker->randomElement(['pending', 'confirmed', 'cancelled']),
-            'remarks' => $this->faker->sentence,
+            'patient_id' => User::factory(),
+            'appointment_date' => $this->faker->dateTimeBetween('2024-11-01', '2024-11-30')->format('Y-m-d'),
+            'preference' => $this->faker->randomElement(['Morning', 'Afternoon']),
+            'appointment_time' => $this->faker->time(),
+            'status' => $this->faker->randomElement(['Pending',  'Cancelled', 'Accepted', 'Rejected', 'Missed', 'Ongoing', 'Completed']),
+            'service' => $this->faker->randomElement(['Consultation', 'Extraction', 'Orthodontic']),
+            'remarks' => $this->faker->sentence(),
         ];
     }
 }

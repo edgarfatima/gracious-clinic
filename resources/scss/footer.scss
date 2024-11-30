@@ -7,8 +7,6 @@
         .footer-container {
             display: flex;
             justify-content: center;
-            background: rgb(10,109,157);
-                background: linear-gradient(225deg, rgba(10,109,157,1) 0%, rgba(107,203,235,1) 90%);
             .footer-content {
                 display: flex;
                 flex-direction: column;
@@ -16,17 +14,16 @@
                 width: 100%;
                 padding: 10px 0;
                 p {
-                    color: v.$white;
+                    color: v.$black;
                     font-size: 12px;
                 }
                 ul {
-                    color: v.$white;
                     li {
                         display: inline;
     
                         a {
                             font-size: 12px;
-                            color: v.$white;
+                            color: v.$black;
                             text-decoration: none;
                             font-weight: bold;
                         }

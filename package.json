@@ -12,6 +12,8 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "chart.js": "^4.4.4"
+        "chart.js": "^4.4.4",
+        "jquery": "^3.7.1",
+        "select2": "^4.1.0-rc.0"
     }
 }
