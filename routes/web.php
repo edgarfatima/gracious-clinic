@@ -32,7 +32,7 @@ Route::prefix('account')->middleware('user.guest')->group(function () {
     Route::post('login/authenticate', [UserLoginController::class, 'authenticate'])->name('user.authenticate');
     Route::get('cities/{provinceId}', [UserRegisterController::class, 'populateCities']);
     Route::get('register', [UserRegisterController::class, 'create'])->name('user.register');
-    Route::post('register/process', [UserRegisterController::class, 'processRegister'])->name('user.register.process');
+    Route::post('register/process', [UserRegisterController::class, 'processRegister']);
     Route::get('verification/{number}', [UserVerificationController::class, 'verify'])->name('user.verify');
     Route::get('verification', [UserVerificationController::class, 'create'])->name('user.verification');
     Route::get('forgot-password', [UserForgotController::class, 'create'])->name('user.forgot.password');

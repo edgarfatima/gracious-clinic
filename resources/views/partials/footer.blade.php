@@ -1,5 +1,4 @@
-<footer class="footer-section">
-    <div class="footer-container">
+<footer>
         <div class="footer-content">
             <p>Copyright © 2024 Gracious Smile Dental Clinic</p>
             <ul>
@@ -7,5 +6,4 @@
                 <li><a href="/privacy-policy">Privacy Policy</a></li>
             </ul>
         </div>
-    </div>
 </footer>
